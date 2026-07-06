@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Developer Portfolio</title>
+    <title>Joshua Atienza — Developer Portfolio</title>
+    <meta name="description" content="Joshua Atienza — Computer Engineering student. Games, websites, and AI solutions. See you, space cowboy.">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -21,12 +22,17 @@
     <link rel="icon" type="image/png" sizes="32x32" href="img/Profile.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="img/Profile.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="img/Profile.png" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#030306" />
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- ===== ATMOSPHERIC LAYERS ===== -->
+    <canvas id="rain-canvas" aria-hidden="true"></canvas>
+    <div id="cursor-spotlight" aria-hidden="true"></div>
+    <div id="noise-overlay" aria-hidden="true"></div>
+
     <header class="topbar">
         <div class="topbar-inner">
             <a href="#home" class="topbar-brand">Joshua Atienza</a>
@@ -44,7 +50,7 @@
         <div class="hero-grid">
             <!-- Left Column -->
             <div class="hero-left">
-                <div class="hero-logo-main">Joshua<br>Atienza</div>
+                <div class="hero-logo-main glitch-text" data-text="Joshua Atienza">Joshua<br>Atienza</div>
                 <div class="hero-arrow">
                     <svg width="30" height="30" viewBox="0 0 30 30">
                         <polyline points="5,5 25,25 5,25" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -77,11 +83,11 @@
     </section>
 
     <!-- About Section -->
-    <section id="about" class="about-section">
+    <section id="about" class="about-section reveal-section">
         <div class="section-container">
             <div class="section-header">
                 <h2 class="section-title">Building Tomorrow's Technology Today</h2>
-                <span class="section-number">02 | ABOUT</span>
+                <span class="section-number">SESSION 02 | ABOUT</span>
             </div>
 
             <div class="content-block">
@@ -108,11 +114,11 @@
     </section>
 
     <!-- Projects Section -->
-    <section id="projects" class="projects-section">
+    <section id="projects" class="projects-section reveal-section">
         <div class="section-container">
             <div class="section-header">
                 <h2 class="section-title">PROJECTS</h2>
-                <span class="section-number">03 | PROJECTS</span>
+                <span class="section-number">SESSION 03 | PROJECTS</span>
             </div>
 
             <!-- Project 1 -->
@@ -174,10 +180,10 @@
     </section>
 
     <!-- Tools Section -->
-    <section id="skills" class="tools-section">
+    <section id="skills" class="tools-section reveal-section">
         <div class="section-container">
             <h2 class="section-title">Skills & Technologies</h2>
-            <span class="section-number">04 | SKILLS</span>
+            <span class="section-number">SESSION 04 | SKILLS</span>
 
             <div class="skills-columns">
                 <!-- Skills Column -->
@@ -238,10 +244,10 @@
     </section>
 
     <!-- Gallery Section -->
-    <section class="gallery-section">
+    <section class="gallery-section reveal-section">
         <div class="section-container">
             <h2 class="section-title">Fragments of Stillness.</h2>
-            <span class="section-number">05 | GALLERY</span>
+            <span class="section-number">SESSION 05 | GALLERY</span>
 
             <div class="gallery-grid">
                 <div class="gallery-item tall">
@@ -268,10 +274,10 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="contact-section">
+    <section id="contact" class="contact-section reveal-section">
         <div class="section-container">
             <h2 class="section-title">Let's Create Something Remarkable</h2>
-            <span class="section-number">06 | CONTACT</span>
+            <span class="section-number">SESSION 06 | CONTACT</span>
 
             <div class="contact-content">
                 <div class="contact-info">
@@ -309,12 +315,175 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="section-container">
-            <p class="footer-text">&copy; 2026 Developer Portfolio. All rights reserved.</p>
+            <p class="footer-text">&copy; 2026 Joshua Atienza. See you, space cowboy.</p>
         </div>
     </footer>
 
     <script>
+        // Initialize Lucide icons
         lucide.createIcons();
+
+        // =============================================
+        // RAIN — BR2049 perpetual downpour
+        // =============================================
+        (function () {
+            const canvas = document.getElementById('rain-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const DROP_COUNT = 160;
+            const drops = [];
+
+            for (let i = 0; i < DROP_COUNT; i++) {
+                drops.push({
+                    x: Math.random() * (canvas.width + 200) - 100,
+                    y: Math.random() * canvas.height,
+                    len: Math.random() * 20 + 8,
+                    speed: Math.random() * 3.5 + 1.5,
+                    opacity: Math.random() * 0.22 + 0.06,
+                    thickness: Math.random() * 1.2 + 0.3
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.lineCap = 'round';
+
+                for (const d of drops) {
+                    ctx.beginPath();
+                    // Slanted rain — slight wind from the left
+                    ctx.moveTo(d.x, d.y);
+                    ctx.lineTo(d.x + d.len * 0.15, d.y + d.len);
+                    ctx.strokeStyle = `rgba(160, 190, 220, ${d.opacity})`;
+                    ctx.lineWidth = d.thickness;
+                    ctx.stroke();
+
+                    d.y += d.speed;
+                    d.x += d.speed * 0.15;
+
+                    if (d.y > canvas.height + d.len) {
+                        d.y = -(d.len + Math.random() * 120);
+                        d.x = Math.random() * (canvas.width + 200) - 100;
+                    }
+                }
+
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
+
+        // =============================================
+        // CURSOR SPOTLIGHT — holographic projector
+        // =============================================
+        (function () {
+            const el = document.getElementById('cursor-spotlight');
+            if (!el) return;
+
+            let mx = window.innerWidth / 2;
+            let my = window.innerHeight / 2;
+            let cx = mx, cy = my;
+
+            document.addEventListener('mousemove', function (e) {
+                mx = e.clientX;
+                my = e.clientY;
+            });
+
+            function update() {
+                // Smooth lerp follow
+                cx += (mx - cx) * 0.06;
+                cy += (my - cy) * 0.06;
+
+                el.style.background =
+                    'radial-gradient(700px circle at ' + cx + 'px ' + cy + 'px, ' +
+                    'rgba(232, 148, 58, 0.06), ' +
+                    'rgba(0, 229, 255, 0.02) 35%, ' +
+                    'transparent 65%)';
+
+                requestAnimationFrame(update);
+            }
+            update();
+
+            // Hide on touch devices
+            if ('ontouchstart' in window) {
+                el.style.display = 'none';
+            }
+        })();
+
+        // =============================================
+        // SECTION REVEAL ON SCROLL
+        // =============================================
+        (function () {
+            const sections = document.querySelectorAll('.reveal-section');
+
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.06,
+                rootMargin: '0px 0px -30px 0px'
+            });
+
+            sections.forEach(function (s) {
+                observer.observe(s);
+            });
+        })();
+
+        // =============================================
+        // FLOATING PARTICLES — amber dust / smog
+        // =============================================
+        (function () {
+            // Skip on low-powered devices
+            if (window.innerWidth < 768) return;
+
+            const count = 18;
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = (Math.random() * 100) + 'vw';
+                p.style.animationDelay = (Math.random() * 12) + 's';
+                p.style.animationDuration = (Math.random() * 10 + 8) + 's';
+                const size = Math.random() * 2.5 + 0.5;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.setAttribute('aria-hidden', 'true');
+                document.body.appendChild(p);
+            }
+        })();
+
+        // =============================================
+        // TOPBAR SCROLL EFFECT — darken on scroll
+        // =============================================
+        (function () {
+            const topbar = document.querySelector('.topbar');
+            if (!topbar) return;
+
+            let ticking = false;
+            window.addEventListener('scroll', function () {
+                if (!ticking) {
+                    requestAnimationFrame(function () {
+                        if (window.scrollY > 60) {
+                            topbar.style.background = 'rgba(3, 3, 6, 0.95)';
+                            topbar.style.borderBottomColor = 'rgba(232, 148, 58, 0.15)';
+                        } else {
+                            topbar.style.background = 'rgba(3, 3, 6, 0.88)';
+                            topbar.style.borderBottomColor = 'rgba(232, 148, 58, 0.1)';
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        })();
     </script>
 </body>
 </html>
